@@ -24,3 +24,4 @@ Developer Push → GitHub Actions CI → ECR Push → Jenkins CD → ArgoCD GitO
 - `scripts/` — Automation bash scripts
 - `helm/` — Helm chart for app deployment
 EOF
+# CI Test
