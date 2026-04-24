@@ -132,5 +132,7 @@ jobs:
           git config user.email "kishorgavhane.dev@gmail.com"
           git config user.name "GitHub Actions"
           git add helm/app-chart/values.yaml
-          git commit -m "ci: update image tag to ${{ steps.tag.outputs.IMAGE_TAG }}"
-          git push
+          git diff --quiet && git diff --staged --quiet || git diff --quiet && git diff --staged --quiet || \
+            git commit -m "Update image tag to ${{ steps.tag.outputs.IMAGE_TAG }}"
+          git diff --quiet && git diff --staged --quiet || git push
+
