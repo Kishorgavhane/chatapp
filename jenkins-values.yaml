@@ -1,0 +1,20 @@
+controller:
+  serviceType: LoadBalancer
+  installPlugins:
+    - kubernetes:latest
+    - workflow-aggregator:latest
+    - git:latest
+    - configuration-as-code:latest
+    - aws-credentials:latest
+    - pipeline-aws:latest
+    - blueocean:latest
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "512Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1Gi"
+persistence:
+  enabled: true
+  size: 10Gi
