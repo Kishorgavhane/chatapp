@@ -25,4 +25,6 @@ secrets/
 echo "node_modules/" >> .gitignore
 echo "__pycache__/" >> .gitignore
 echo "*.pyc" >> .gitignore
+node_modules/
+dist/
 EOF
