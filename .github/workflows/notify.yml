@@ -1,0 +1,20 @@
+name: Notify — Jira on Deploy
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline — DevBoard"]
+    types:
+      - completed
+
+jobs:
+  notify:
+    name: Update Jira ticket
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Notify success
+        run: |
+          echo "CI Pipeline completed successfully!"
+          echo "Image tag: ${GITHUB_SHA::8}"
+          echo "Deploy triggered for DevBoard app"

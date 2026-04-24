@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: chatapp
+      POSTGRES_PASSWORD: chatapp
+      POSTGRES_DB: chatapp
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chatapp"]
+      interval: 5s
+      retries: 5
+    networks: [chatapp]
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql://chatapp:chatapp@db:5432/chatapp
+    ports: ["8000:8000"]
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - media:/app/media
+    networks: [chatapp]
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports: ["3000:80"]
+    depends_on: [backend]
+    networks: [chatapp]
+
+volumes:
+  pgdata:
+  media:
+
+networks:
+  chatapp:
+    driver: bridge

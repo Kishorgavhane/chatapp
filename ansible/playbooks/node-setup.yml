@@ -1,0 +1,31 @@
+---
+- name: Configure EKS Worker Nodes
+  hosts: eks_nodes
+  become: yes
+  gather_facts: yes
+
+  pre_tasks:
+    - name: Wait for nodes to be reachable
+      wait_for_connection:
+        timeout: 60
+
+    - name: Print node info
+      debug:
+        msg: "Configuring node: {{ inventory_hostname }}"
+
+  roles:
+    - role: k8s-node
+      tags: ['k8s']
+    - role: docker
+      tags: ['docker']
+    - role: ssh-hardening
+      tags: ['security']
+
+  post_tasks:
+    - name: Verify Docker is running
+      service_facts:
+      register: services_state
+
+    - name: Docker status
+      debug:
+        msg: "Docker is {{ services_state.ansible_facts.services['docker.service'].state }}"

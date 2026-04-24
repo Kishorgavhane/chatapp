@@ -1,0 +1,28 @@
+cat > .gitignore << 'EOF'
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+.terraform.lock.hcl
+
+# Ansible
+*.retry
+
+# Docker
+.dockerignore
+
+# OS
+.DS_Store
+*.log
+
+# Secrets —
+*.pem
+*.key
+secrets/
+.env
+
+echo "node_modules/" >> .gitignore
+echo "__pycache__/" >> .gitignore
+echo "*.pyc" >> .gitignore
+EOF

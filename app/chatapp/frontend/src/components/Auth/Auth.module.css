@@ -1,0 +1,86 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at 60% 40%, rgba(37,99,235,0.15) 0%, transparent 60%),
+              var(--bg-primary);
+}
+
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+}
+
+.logo {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.logoIcon { font-size: 40px; display: block; margin-bottom: 8px; }
+.logo h1  { font-size: 24px; font-weight: 700; color: var(--text-primary); }
+.logo p   { color: var(--text-secondary); font-size: 13px; margin-top: 4px; }
+
+.tabs {
+  display: flex;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  margin-bottom: 28px;
+}
+.tabs button {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all .2s;
+}
+.tabs button.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.form { display: flex; flex-direction: column; gap: 16px; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+.field input {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: border-color .2s;
+}
+.field input:focus { border-color: var(--accent-light); }
+.field input::placeholder { color: var(--text-muted); }
+
+.error {
+  background: rgba(239,68,68,.1);
+  border: 1px solid rgba(239,68,68,.3);
+  border-radius: var(--radius-sm);
+  color: #f87171;
+  padding: 10px 14px;
+  font-size: 13px;
+}
+
+.submit {
+  background: var(--accent);
+  color: #fff;
+  padding: 13px;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 600;
+  transition: opacity .2s;
+  margin-top: 4px;
+}
+.submit:hover:not(:disabled) { opacity: .88; }
+.submit:disabled { opacity: .5; cursor: not-allowed; }
