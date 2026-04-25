@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional, List
 from datetime import datetime
 from app.models.message import MessageType, MessageStatus
@@ -8,6 +8,23 @@ class UserRegister(BaseModel):
     email: EmailStr
     username: str
     password: str
+
+    @field_validator('username')
+    @classmethod
+    def username_valid(cls, v):
+        v = v.strip()
+        if len(v) < 3:
+            raise ValueError('Username must be at least 3 characters')
+        if len(v) > 30:
+            raise ValueError('Username too long')
+        return v
+
+    @field_validator('password')
+    @classmethod
+    def password_valid(cls, v):
+        if len(v) < 6:
+            raise ValueError('Password must be at least 6 characters')
+        return v
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -20,7 +37,7 @@ class TokenResponse(BaseModel):
     username: str
     email: str
 
-# ── User ─────────────────────────────────────────────────────────────────────
+# ── User ──────────────────────────────────────────────────────────────────────
 class UserOut(BaseModel):
     id: int
     email: str
@@ -29,6 +46,7 @@ class UserOut(BaseModel):
     bio: str
     is_online: bool
     last_seen: datetime
+    created_at: datetime
 
     class Config:
         from_attributes = True
@@ -46,11 +64,11 @@ class MessageOut(BaseModel):
     is_deleted: bool
     is_edited: bool
     sender_id: int
-    receiver_id: Optional[int]
-    group_id: Optional[int]
+    receiver_id: Optional[int] = None
+    group_id: Optional[int] = None
     created_at: datetime
     updated_at: datetime
-    sender: UserOut
+    sender: Optional[UserOut] = None
     reactions: List[dict] = []
 
     class Config:

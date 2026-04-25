@@ -12,4 +12,6 @@ RUN mkdir -p /app/media && chown -R app:app /app
 USER app
 
 EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--ws", "websockets"]
+
+# Use python -m to ensure module path is correct
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--ws", "websockets", "--log-level", "info"]

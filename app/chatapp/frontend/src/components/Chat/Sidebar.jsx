@@ -4,13 +4,13 @@ import { formatDistanceToNow } from 'date-fns'
 import { useAuth } from '../../context/AuthContext'
 import styles from './Sidebar.module.css'
 
-export default function Sidebar({ activeChat, onSelectChat, onlineUsers, typingUsers, onOpenSearch, onOpenProfile }) {
-  const { user, logout }        = useAuth()
-  const [contacts, setContacts] = useState([])
-  const [groups, setGroups]     = useState([])
-  const [search, setSearch]     = useState('')
+export default function Sidebar({ activeChat, onSelectChat, onlineUsers, typingUsers, onOpenSearch, onOpenProfile, onOpenAI }) {
+  const { user, logout }          = useAuth()
+  const [contacts, setContacts]   = useState([])
+  const [groups, setGroups]       = useState([])
+  const [search, setSearch]       = useState('')
   const [searchRes, setSearchRes] = useState([])
-  const [tab, setTab]           = useState('chats')
+  const [tab, setTab]             = useState('chats')
 
   useEffect(() => {
     axios.get('/api/users/search?q=').then(r => setContacts(r.data)).catch(() => {})
@@ -31,6 +31,7 @@ export default function Sidebar({ activeChat, onSelectChat, onlineUsers, typingU
 
   return (
     <aside className={styles.sidebar}>
+      {/* Header */}
       <div className={styles.header}>
         <div className={styles.myProfile} onClick={onOpenProfile}>
           <div className={styles.avatar}>
@@ -45,17 +46,33 @@ export default function Sidebar({ activeChat, onSelectChat, onlineUsers, typingU
         </div>
       </div>
 
+      {/* AI Chat Button */}
+      <button
+        className={`${styles.aiBtn} ${activeChat?.type === 'ai' ? styles.aiBtnActive : ''}`}
+        onClick={onOpenAI}
+      >
+        <span className={styles.aiBtnIcon}>🤖</span>
+        <div className={styles.aiBtnInfo}>
+          <span className={styles.aiBtnTitle}>AI Assistant</span>
+          <span className={styles.aiBtnSub}>Powered by Ollama • Llama</span>
+        </div>
+        <span className={styles.aiBtnBadge}>AI</span>
+      </button>
+
+      {/* Search */}
       <div className={styles.searchWrap}>
         <span>🔍</span>
         <input className={styles.searchInput} placeholder="Search users…"
           value={search} onChange={e => setSearch(e.target.value)} />
       </div>
 
+      {/* Tabs */}
       <div className={styles.tabs}>
         <button className={tab === 'chats' ? styles.activeTab : ''} onClick={() => setTab('chats')}>Chats</button>
         <button className={tab === 'groups' ? styles.activeTab : ''} onClick={() => setTab('groups')}>Groups</button>
       </div>
 
+      {/* List */}
       <div className={styles.list}>
         {tab === 'chats' && displayList.map(u => (
           <div key={u.id}

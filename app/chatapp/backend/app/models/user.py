@@ -15,9 +15,7 @@ class User(Base):
     is_online  = Column(Boolean, default=False)
     last_seen  = Column(DateTime, default=datetime.utcnow)
     created_at = Column(DateTime, default=datetime.utcnow)
+    fcm_token  = Column(String(500), nullable=True, default=None)  # Phase 4: FCM push
 
     sent_messages     = relationship("Message", foreign_keys="Message.sender_id", back_populates="sender")
     group_memberships = relationship("GroupMember", back_populates="user")
-
-# Phase 4: FCM push notification token
-User.fcm_token = None  # Added via Alembic migration in prod; patched here for SQLite/dev auto-create

@@ -121,3 +121,29 @@
 .headerActions { display: flex; gap: 4px; }
 .hBtn { background: none; color: var(--text-secondary); font-size: 18px; padding: 6px; border-radius: 8px; transition: color .2s, background .2s; }
 .hBtn:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+/* AI Button */
+.aiBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 12px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, rgba(124,108,248,.12), rgba(37,99,235,.12));
+  border: 1px solid rgba(124,108,248,.3);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all .2s;
+  text-align: left;
+}
+.aiBtn:hover    { background: linear-gradient(135deg, rgba(124,108,248,.2), rgba(37,99,235,.2)); border-color: rgba(124,108,248,.5); }
+.aiBtnActive    { border-color: #7c6cf8; background: linear-gradient(135deg, rgba(124,108,248,.25), rgba(37,99,235,.25)); }
+.aiBtnIcon      { font-size: 24px; flex-shrink: 0; }
+.aiBtnInfo      { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.aiBtnTitle     { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.aiBtnSub       { font-size: 11px; color: var(--text-muted); }
+.aiBtnBadge     { background: linear-gradient(135deg, #7c6cf8, #2563eb); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 6px; letter-spacing: 1px; }
+
+.headerActions  { display: flex; gap: 4px; }
+.hBtn           { background: none; color: var(--text-secondary); font-size: 18px; padding: 6px; border-radius: 8px; transition: color .2s, background .2s; }
+.hBtn:hover     { background: var(--bg-hover); color: var(--text-primary); }

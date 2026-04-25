@@ -1,42 +1,103 @@
 version: "3.9"
 
 services:
+
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: chatapp
+      POSTGRES_USER:     chatapp
       POSTGRES_PASSWORD: chatapp
-      POSTGRES_DB: chatapp
+      POSTGRES_DB:       chatapp
     volumes:
       - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U chatapp"]
       interval: 5s
-      retries: 5
+      timeout: 5s
+      retries: 10
     networks: [chatapp]
+    restart: unless-stopped
 
-  backend:
-    build: ./backend
+  # ── Ollama (Local AI) ───────────────────────────────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks: [chatapp]
+    restart: unless-stopped
+    # GPU support (uncomment if you have NVIDIA GPU):
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  # ── Model Puller (downloads llama3.2 on first run) ─────────────────────────
+  ollama-init:
+    image: ollama/ollama:latest
+    depends_on:
+      - ollama
+    networks: [chatapp]
+    entrypoint: >
+      sh -c "
+        echo 'Waiting for Ollama to start...';
+        sleep 8;
+        ollama pull llama3.2;
+        echo 'Model ready!';
+      "
     environment:
-      DATABASE_URL: postgresql://chatapp:chatapp@db:5432/chatapp
-    ports: ["8000:8000"]
+      - OLLAMA_HOST=http://ollama:11434
+    restart: "no"
+
+  # ── Backend (FastAPI) ───────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL:               postgresql://chatapp:chatapp@db:5432/chatapp
+      SECRET_KEY:                 "change-this-in-production-use-long-random-string"
+      ALGORITHM:                  HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: "10080"
+      MEDIA_DIR:                  /app/media
+      FCM_SERVER_KEY:             ""
+      OLLAMA_URL:                 http://ollama:11434
+      OLLAMA_MODEL:               llama3.2
+    ports:
+      - "8000:8000"
     depends_on:
       db:
         condition: service_healthy
+      ollama:
+        condition: service_started
     volumes:
       - media:/app/media
     networks: [chatapp]
     restart: unless-stopped
 
+  # ── Frontend (React + Nginx) ────────────────────────────────────────────────
   frontend:
-    build: ./frontend
-    ports: ["3000:80"]
-    depends_on: [backend]
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
     networks: [chatapp]
+    restart: unless-stopped
 
 volumes:
   pgdata:
   media:
+  ollama_data:    # AI models stored here (~2GB for llama3.2)
 
 networks:
   chatapp:

@@ -1,0 +1,91 @@
+---
+# ansible/playbooks/pre-deploy.yml
+# Runs before ArgoCD sync:
+#  - Ensure namespaces exist
+#  - Run DB migrations via K8s Job
+#  - Health check current version
+
+- name: ChatApp Pre-Deployment
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    namespace: chatapp
+    env:       "{{ env | default('staging') }}"
+    image_tag: "{{ image_tag | default('latest') }}"
+    docker_username: "{{ lookup('env','DOCKER_USERNAME') | default('yourdockerusername') }}"
+
+  tasks:
+
+    - name: Verify kubectl connectivity
+      command: kubectl cluster-info
+      register: cluster_info
+      changed_when: false
+
+    - name: Ensure chatapp namespace
+      kubernetes.core.k8s:
+        kind: Namespace
+        name: "{{ namespace }}"
+        state: present
+        definition:
+          metadata:
+            labels:
+              app: chatapp
+              env: "{{ env }}"
+
+    - name: Ensure monitoring namespace
+      kubernetes.core.k8s:
+        kind: Namespace
+        name: monitoring
+        state: present
+
+    - name: Check existing rollout status
+      command: kubectl rollout status deployment/chatapp-backend -n {{ namespace }} --timeout=30s
+      register: rollout
+      failed_when: false
+      changed_when: false
+
+    - name: Run DB migration job
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: batch/v1
+          kind: Job
+          metadata:
+            name: "chatapp-migrate-{{ image_tag | replace('.','') | truncate(10, True, '') }}"
+            namespace: "{{ namespace }}"
+          spec:
+            ttlSecondsAfterFinished: 300
+            template:
+              spec:
+                restartPolicy: Never
+                containers:
+                  - name: migrate
+                    image: "{{ docker_username }}/chatapp-backend:{{ image_tag }}"
+                    command: ["python", "-c", "from app.core.database import Base, engine; Base.metadata.create_all(bind=engine); print('Migrations done.')"]
+                    envFrom:
+                      - secretRef:
+                          name: chatapp-secrets
+
+    - name: Wait for migration to complete
+      command: >
+        kubectl wait job/chatapp-migrate-{{ image_tag | replace('.','') | truncate(10, True, '') }}
+        -n {{ namespace }} --for=condition=complete --timeout=120s
+      changed_when: false
+      failed_when: false
+
+    - name: Health check current backend (if running)
+      uri:
+        url: "http://chatapp-backend.{{ namespace }}.svc.cluster.local:8000/health"
+        status_code: [200, -1]
+      register: health
+      failed_when: false
+      changed_when: false
+
+    - name: Show health status
+      debug:
+        msg: "Pre-deploy health: {{ health.status | default('UNREACHABLE') }}"
+
+    - name: Done
+      debug:
+        msg: "Pre-deploy complete. ENV={{ env }} TAG={{ image_tag }}"

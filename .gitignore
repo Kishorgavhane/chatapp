@@ -28,3 +28,6 @@ echo "*.pyc" >> .gitignore
 node_modules/
 dist/
 EOF
+node_modules/
+__pycache__/
+*.pyc
