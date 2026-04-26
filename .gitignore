@@ -31,3 +31,5 @@ EOF
 node_modules/
 __pycache__/
 *.pyc
+app/chatapp/frontend/node_modules/
+app/chatapp/backend/__pycache__/
