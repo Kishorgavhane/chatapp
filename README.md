@@ -7,7 +7,7 @@ End-to-end DevOps pipeline on AWS EKS using:
 - **Docker** — Application containerization
 - **GitHub Actions** — CI Pipeline (build, test, scan, push)
 - **Jenkins** — CD Orchestrator (env promotion)
-- **ArgoCD** — GitOps continuous delivery
+- **ArgoCD** — GitOps continuous delivery.
 - **Kubernetes** — Container orchestration (EKS)
 - **Helm** — Kubernetes package management
 - **Prometheus + Grafana** — Observability
