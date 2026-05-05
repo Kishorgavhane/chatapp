@@ -15,5 +15,6 @@ spec:
       containers:
       - name: chatapp
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
-        - containerPort: 3000
+        - containerPort: 80
