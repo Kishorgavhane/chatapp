@@ -1,0 +1,10 @@
+replicaCount: 1
+
+image:
+  repository: 182138815046.dkr.ecr.ap-south-1.amazonaws.com/devboard-backend
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 3000
