@@ -1,20 +1,41 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: chatapp
+  name: chatapp-backend
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: chatapp
+      app: chatapp-backend
   template:
     metadata:
       labels:
-        app: chatapp
+        app: chatapp-backend
     spec:
       containers:
-      - name: chatapp
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+      - name: chatapp-backend
+        image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatapp-frontend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: chatapp-frontend
+  template:
+    metadata:
+      labels:
+        app: chatapp-frontend
+    spec:
+      containers:
+      - name: chatapp-frontend
+        image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+        imagePullPolicy: Always
         ports:
         - containerPort: 80

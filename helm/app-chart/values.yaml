@@ -1,9 +1,14 @@
 replicaCount: 1
 
-image:
-  repository: 182138815046.dkr.ecr.ap-south-1.amazonaws.com/chatapp
-  tag: latest
-  pullPolicy: Always
+backend:
+  image:
+    repository: 182138815046.dkr.ecr.ap-south-1.amazonaws.com/chatapp-backend
+    tag: latest
+
+frontend:
+  image:
+    repository: 182138815046.dkr.ecr.ap-south-1.amazonaws.com/chatapp-frontend
+    tag: latest
 
 service:
   type: LoadBalancer
