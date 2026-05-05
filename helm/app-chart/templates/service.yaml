@@ -13,11 +13,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: chatapp-backend-svc
+  name: backend
 spec:
   selector:
     app: chatapp-backend
   ports:
-  - port: 8000
+  - port: 80
     targetPort: 8000
   type: ClusterIP
